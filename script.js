@@ -1,37 +1,43 @@
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
 
-    // 获取用户输入
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // 阻止表单的默认提交行为
 
-    // 基本的输入验证
-    if (!username || !password) {
-        document.getElementById('message').textContent = 'Username and password cannot be empty!';
-        return; // 阻止表单提交
-    }
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-    // 发送异步请求到后端服务器
-    fetch('http://localhost:8080/login', { // 替换为后端登录接口的实际URL
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username: username, password: password })
-    })
-    .then(response => response.json()) // 解析JSON响应
-    .then(data => {
-        if (data.success) {
-            // 登录成功，页面跳转
-            window.location.href = '/home'; // 替换为登录成功后要跳转的页面URL
-        } else {
-            // 登录失败，显示错误消息
-            document.getElementById('message').textContent = data.message;
-        }
-    })
-    .catch(error => {
-        // 网络或其他错误
-        document.getElementById('message').textContent = 'An error occurred. Please try again.';
-        console.error('Error:', error);
+        const userData = {
+            username: username,
+            password: password
+        };
+
+        fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            messageDiv.textContent = data.message;
+            if (data.message === 'Login successful') {
+                messageDiv.style.color = 'green';
+            } else {
+                messageDiv.style.color = 'red';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messageDiv.textContent = 'Login failed: ' + error.message;
+            messageDiv.style.color = 'red';
+        });
     });
 });
