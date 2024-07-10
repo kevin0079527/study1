@@ -1,13 +1,31 @@
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
     
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    // 简单的前端验证
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
     
-    // 这里可以添加验证逻辑，然后发送请求到后端进行登录验证
-    console.log('Username:', username);
-    console.log('Password:', password);
+    if(username === '' || password === '') {
+        alert("Username and password cannot be empty.");
+        return;
+    }
     
-    // 假设登录成功，可以在这里添加跳转逻辑
-    alert('Login Successful!');
+    // 如果验证通过，发送请求到后端
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/login', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            alert('Login successful!');
+            // 通常会在这里处理登录后跳转或显示消息等
+        } else {
+            alert('Login failed: ' + xhr.responseText);
+        }
+    };
+    
+    xhr.send(JSON.stringify({
+        username: username,
+        password: password
+    }));
 });
