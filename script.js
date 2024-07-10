@@ -12,7 +12,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     // 发送异步请求到后端服务器
-    fetch('/login', { // 替换为后端登录接口的实际URL
+    fetch('http://localhost:8080/login', { // 替换为后端登录接口的实际URL
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
